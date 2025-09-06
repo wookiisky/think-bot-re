@@ -1,0 +1,22 @@
+{
+  "extensionName": {
+    "message": "Think Bot",
+    "description": "扩展名称"
+  },
+  "extensionDescription": {
+    "message": "与网页内容智能对话",
+    "description": "扩展描述"
+  },
+  "sidebarTitle": {
+    "message": "Think Bot",
+    "description": "侧边栏标题"
+  },
+  "optionsTitle": {
+    "message": "Think Bot 设置",
+    "description": "选项页面标题"
+  },
+  "conversationsTitle": {
+    "message": "Think Bot 会话历史",
+    "description": "会话页面标题"
+  }
+}

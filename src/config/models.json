@@ -1,0 +1,41 @@
+[
+  {
+    "id": "gpt-4",
+    "name": "GPT-4",
+    "provider": "openai",
+    "enabled": false,
+    "lastModified": 0,
+    "apiKey": "",
+    "baseUrl": "https://api.openai.com/v1",
+    "maxTokens": 8192,
+    "model": "gpt-4",
+    "temperature": 0.7,
+    "tools": []
+  },
+  {
+    "id": "gpt-3.5-turbo",
+    "name": "GPT-3.5 Turbo",
+    "provider": "openai",
+    "enabled": false,
+    "lastModified": 0,
+    "apiKey": "",
+    "baseUrl": "https://api.openai.com/v1",
+    "maxTokens": 4096,
+    "model": "gpt-3.5-turbo",
+    "temperature": 0.7,
+    "tools": []
+  },
+  {
+    "id": "gemini-pro",
+    "name": "Gemini Pro",
+    "provider": "gemini",
+    "enabled": false,
+    "lastModified": 0,
+    "apiKey": "",
+    "baseUrl": "https://generativelanguage.googleapis.com",
+    "maxTokens": 32768,
+    "model": "gemini-1.5-pro",
+    "temperature": 0.7,
+    "tools": []
+  }
+]

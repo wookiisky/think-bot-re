@@ -1,0 +1,43 @@
+{
+  "page_title": "Think Bot",
+  
+  "content_area_extract_success": "内容提取成功",
+  "content_area_extract_failed": "内容提取失败",
+  "content_area_extract_empty": "此页面未找到可提取的内容",
+  "content_area_extract_loading": "正在提取内容...",
+  "content_area_blacklisted": "此网站已被列入黑名单",
+  "content_area_unsupported": "不支持此页面类型",
+  
+  "control_bar_re_extract": "重新提取",
+  "control_bar_copy_content": "复制内容",
+  "control_bar_open_conversations": "打开会话历史",
+  "control_bar_settings": "设置",
+  
+  "quick_tabs_default": "快捷对话",
+  "quick_tabs_loading": "加载中...",
+  "quick_tabs_error": "加载标签页时出错",
+  
+  "chat_area_empty_state": "在下方输入框开始对话",
+  "chat_area_typing_indicator": "Think Bot 正在输入...",
+  "chat_area_error_occurred": "处理您的消息时发生错误",
+  
+  "input_area_placeholder": "在此输入您的消息...",
+  "input_area_model_select": "选择模型",
+  "input_area_include_content": "包含页面内容",
+  "input_area_send_message": "发送消息",
+  "input_area_stop_generation": "停止生成",
+  "input_area_max_length": "最多 {{maxLength}} 个字符",
+  
+  "message_user_label": "您",
+  "message_ai_label": "Think Bot",
+  "message_action_copy": "复制",
+  "message_action_edit": "编辑",
+  "message_action_retry": "重试",
+  "message_action_branch": "分支",
+  "message_action_delete": "删除",
+  
+  "blacklist_confirm_title": "黑名单网站",
+  "blacklist_confirm_message": "此网站在您的黑名单中。是否仍要继续？",
+  "blacklist_confirm_proceed": "继续",
+  "blacklist_confirm_cancel": "取消"
+}

@@ -1,0 +1,48 @@
+{
+  "app_name": "Think Bot",
+  "app_tagline": "与网页内容智能对话",
+  
+  "button_save": "保存",
+  "button_cancel": "取消",
+  "button_confirm": "确认",
+  "button_delete": "删除",
+  "button_edit": "编辑",
+  "button_copy": "复制",
+  "button_refresh": "刷新",
+  "button_retry": "重试",
+  "button_send": "发送",
+  "button_stop": "停止",
+  "button_clear": "清空",
+  "button_import": "导入",
+  "button_export": "导出",
+  "button_add": "添加",
+  "button_remove": "移除",
+  
+  "status_loading": "加载中...",
+  "status_saving": "保存中...",
+  "status_success": "成功",
+  "status_failed": "失败",
+  "status_processing": "处理中...",
+  
+  "form_validation_required": "此字段为必填项",
+  "form_validation_invalid_url": "请输入有效的URL",
+  "form_validation_invalid_api_key": "请输入有效的API密钥",
+  
+  "action_confirm_delete": "确定要删除此项吗？",
+  "action_confirm_clear": "确定要清空所有数据吗？",
+  
+  "menu_home": "首页",
+  "menu_settings": "设置",
+  "menu_conversations": "会话历史",
+  "menu_help": "帮助",
+  
+  "time_now": "刚刚",
+  "time_today": "今天",
+  "time_yesterday": "昨天",
+  "time_this_week": "本周",
+  "time_this_month": "本月",
+  
+  "unit_characters": "字符",
+  "unit_words": "词",
+  "unit_tokens": "令牌"
+}

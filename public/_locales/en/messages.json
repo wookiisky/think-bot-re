@@ -1,0 +1,22 @@
+{
+  "extensionName": {
+    "message": "Think Bot RE",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Intelligent conversation with web content",
+    "description": "Description of the extension"
+  },
+  "sidebarTitle": {
+    "message": "Think Bot RE",
+    "description": "Title shown in sidebar"
+  },
+  "optionsTitle": {
+    "message": "Think Bot Settings",
+    "description": "Title shown in options page"
+  },
+  "conversationsTitle": {
+    "message": "Think Bot Conversations",
+    "description": "Title shown in conversations page"
+  }
+}

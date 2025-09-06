@@ -1,0 +1,43 @@
+{
+  "page_title": "Think Bot",
+  
+  "content_area_extract_success": "Content extracted successfully",
+  "content_area_extract_failed": "Failed to extract content",
+  "content_area_extract_empty": "No content found on this page",
+  "content_area_extract_loading": "Extracting content...",
+  "content_area_blacklisted": "This site is blacklisted",
+  "content_area_unsupported": "This page type is not supported",
+  
+  "control_bar_re_extract": "Re-extract",
+  "control_bar_copy_content": "Copy Content",
+  "control_bar_open_conversations": "Open Conversations",
+  "control_bar_settings": "Settings",
+  
+  "quick_tabs_default": "Quick Chat",
+  "quick_tabs_loading": "Loading...",
+  "quick_tabs_error": "Error loading tabs",
+  
+  "chat_area_empty_state": "Start a conversation by typing below",
+  "chat_area_typing_indicator": "Think Bot is typing...",
+  "chat_area_error_occurred": "An error occurred while processing your message",
+  
+  "input_area_placeholder": "Type your message here...",
+  "input_area_model_select": "Select Model",
+  "input_area_include_content": "Include page content",
+  "input_area_send_message": "Send Message",
+  "input_area_stop_generation": "Stop Generation",
+  "input_area_max_length": "Maximum {{maxLength}} characters",
+  
+  "message_user_label": "You",
+  "message_ai_label": "Think Bot",
+  "message_action_copy": "Copy",
+  "message_action_edit": "Edit",
+  "message_action_retry": "Retry",
+  "message_action_branch": "Branch",
+  "message_action_delete": "Delete",
+  
+  "blacklist_confirm_title": "Blacklisted Site",
+  "blacklist_confirm_message": "This site is in your blacklist. Do you want to proceed anyway?",
+  "blacklist_confirm_proceed": "Proceed",
+  "blacklist_confirm_cancel": "Cancel"
+}

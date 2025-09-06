@@ -1,0 +1,72 @@
+{
+  "version": "2.0",
+  "exportedBy": "ThinkBot Extension",
+  "config": {
+    "basic": {
+      "defaultExtractionMethod": "readability",
+      "jinaApiKey": "",
+      "systemPrompt": "You are a helpful AI assistant. Please provide accurate and helpful responses based on the context provided.",
+      "contentDisplayHeight": 200,
+      "theme": "system",
+      "defaultModelId": "",
+      "language": "zh_CN",
+      "lastModified": 0
+    },
+    "llm_models": {
+      "models": []
+    },
+    "quickInputs": [
+      {
+        "id": "summarize",
+        "displayText": "总结",
+        "sendText": "请帮我总结这篇文章的主要内容",
+        "autoTrigger": false,
+        "enabled": true,
+        "isDeleted": false,
+        "lastModified": 0
+      },
+      {
+        "id": "translate",
+        "displayText": "翻译",
+        "sendText": "请将这篇文章翻译成中文",
+        "autoTrigger": false,
+        "enabled": true,
+        "isDeleted": false,
+        "lastModified": 0
+      },
+      {
+        "id": "explain",
+        "displayText": "解释",
+        "sendText": "请帮我解释这篇文章中的核心概念",
+        "autoTrigger": false,
+        "enabled": true,
+        "isDeleted": false,
+        "lastModified": 0
+      }
+    ],
+    "blacklist": {
+      "patterns": [
+        {
+          "id": "chrome-internal",
+          "pattern": "chrome://",
+          "enabled": true
+        },
+        {
+          "id": "chrome-extension",
+          "pattern": "chrome-extension://",
+          "enabled": true
+        },
+        {
+          "id": "edge-internal",
+          "pattern": "edge://",
+          "enabled": true
+        }
+      ]
+    },
+    "sync": {
+      "syncWhenSave": false,
+      "lastSyncTime": 0,
+      "deviceId": ""
+    }
+  }
+}

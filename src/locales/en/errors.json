@@ -1,0 +1,48 @@
+{
+  "network_connection_failed": "Network connection failed",
+  "network_timeout": "Request timeout",
+  "network_unauthorized": "Unauthorized access",
+  "network_rate_limited": "Rate limit exceeded",
+  "network_server_error": "Server error",
+  "network_unknown_error": "Unknown network error",
+  
+  "api_key_invalid": "Invalid API key",
+  "api_key_missing": "API key is required",
+  "api_model_not_found": "Model not found",
+  "api_quota_exceeded": "API quota exceeded",
+  "api_response_invalid": "Invalid API response",
+  
+  "storage_read_failed": "Failed to read data from storage",
+  "storage_write_failed": "Failed to write data to storage",
+  "storage_quota_exceeded": "Storage quota exceeded",
+  "storage_corrupted": "Storage data corrupted",
+  
+  "extraction_failed": "Content extraction failed",
+  "extraction_no_content": "No extractable content found",
+  "extraction_timeout": "Content extraction timeout",
+  "extraction_unsupported_page": "Page type not supported",
+  
+  "sync_connection_failed": "Sync connection failed",
+  "sync_authentication_failed": "Sync authentication failed",
+  "sync_conflict_detected": "Sync conflict detected",
+  "sync_data_corrupted": "Sync data corrupted",
+  "sync_quota_exceeded": "Sync storage quota exceeded",
+  
+  "chat_generation_failed": "Message generation failed",
+  "chat_stream_interrupted": "Stream was interrupted",
+  "chat_context_too_long": "Context is too long",
+  "chat_invalid_input": "Invalid input",
+  
+  "config_validation_failed": "Configuration validation failed",
+  "config_load_failed": "Failed to load configuration",
+  "config_save_failed": "Failed to save configuration",
+  
+  "permission_denied": "Permission denied",
+  "feature_not_available": "Feature not available",
+  "operation_cancelled": "Operation cancelled",
+  "operation_timeout": "Operation timeout",
+  
+  "generic_error": "An unexpected error occurred",
+  "generic_retry": "Please try again",
+  "generic_contact_support": "Please contact support if the problem persists"
+}

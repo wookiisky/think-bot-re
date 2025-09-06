@@ -1,0 +1,9 @@
+[
+  "chrome://",
+  "chrome-extension://",
+  "edge://",
+  "about:",
+  "moz-extension://",
+  "chrome.google.com/webstore",
+  "addons.mozilla.org"
+]

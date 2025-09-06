@@ -1,0 +1,48 @@
+{
+  "network_connection_failed": "网络连接失败",
+  "network_timeout": "请求超时",
+  "network_unauthorized": "未授权访问",
+  "network_rate_limited": "请求频率超限",
+  "network_server_error": "服务器错误",
+  "network_unknown_error": "未知网络错误",
+  
+  "api_key_invalid": "无效的API密钥",
+  "api_key_missing": "需要API密钥",
+  "api_model_not_found": "未找到模型",
+  "api_quota_exceeded": "API配额已用完",
+  "api_response_invalid": "无效的API响应",
+  
+  "storage_read_failed": "从存储读取数据失败",
+  "storage_write_failed": "写入数据到存储失败",
+  "storage_quota_exceeded": "存储配额已满",
+  "storage_corrupted": "存储数据损坏",
+  
+  "extraction_failed": "内容提取失败",
+  "extraction_no_content": "未找到可提取的内容",
+  "extraction_timeout": "内容提取超时",
+  "extraction_unsupported_page": "不支持的页面类型",
+  
+  "sync_connection_failed": "同步连接失败",
+  "sync_authentication_failed": "同步认证失败",
+  "sync_conflict_detected": "检测到同步冲突",
+  "sync_data_corrupted": "同步数据损坏",
+  "sync_quota_exceeded": "同步存储配额已满",
+  
+  "chat_generation_failed": "消息生成失败",
+  "chat_stream_interrupted": "数据流中断",
+  "chat_context_too_long": "上下文过长",
+  "chat_invalid_input": "无效输入",
+  
+  "config_validation_failed": "配置验证失败",
+  "config_load_failed": "加载配置失败",
+  "config_save_failed": "保存配置失败",
+  
+  "permission_denied": "权限被拒绝",
+  "feature_not_available": "功能不可用",
+  "operation_cancelled": "操作已取消",
+  "operation_timeout": "操作超时",
+  
+  "generic_error": "发生意外错误",
+  "generic_retry": "请重试",
+  "generic_contact_support": "如果问题持续存在，请联系支持"
+}
