@@ -6,8 +6,11 @@
 // 用户消息
 export interface UserMessage {
   id: string
-  content: string
-  image?: string // Base64 或 URL
+  displayContent: string  // UI中显示的内容（如 Quick Input 的 displayText）
+  actualContent: string   // 实际发送给 LLM 的内容（如 Quick Input 的 sendText）
+  isQuickInput?: boolean  // 标识是否来自快捷指令
+  quickInputId?: string   // 如果来自快捷指令，记录其ID
+  image?: string          // Base64 或 URL
   createdAt: number
 }
 
@@ -76,7 +79,10 @@ export interface ChatEvents {
     pageUrl: string
     tabId: string
     modelId: string
-    content: string
+    displayContent: string  // UI显示的内容
+    actualContent: string   // 实际发送的内容
+    isQuickInput?: boolean  // 是否来自快捷指令
+    quickInputId?: string   // 快捷指令ID
     image?: string
     includeContent: boolean
   }
@@ -94,7 +100,8 @@ export interface ChatEvents {
     pageUrl: string
     tabId: string
     turnId: string
-    newContent: string
+    newDisplayContent: string  // 新的显示内容
+    newActualContent: string   // 新的实际发送内容
   }
   createBranch: {
     pageUrl: string

@@ -2,6 +2,15 @@
 
 本文档基于功能需求描述，结合Chrome扩展开发限制，制定技术选型和开发规范。
 
+特别注意：
+- 项目为chrome扩展，包含侧边栏
+- Chrome 侧边栏运行在特殊的隔离上下文中，有更严格的安全限制
+
+## 参考文档
+- desc.md - 描述了功能、UI和交互，包括侧边栏、会话页面、选项页面、教程页面，以及核心交互流程
+- page_data.md - 页面数据结构和状态管理，定义了PageData、ChatTab、ChatTurn等核心数据结构
+- config_data.md - 配置数据结构，包括LLM模型、快捷指令、基础设置、黑名单、同步设置等
+
 ## 1. 技术栈选择
 
 ### 1.1 核心框架
@@ -432,3 +441,108 @@ public/font/
 - 防抖节流: 搜索和输入使用防抖
 - 内存管理: 及时清理事件监听器和订阅
 
+
+
+## 5. 事件通信与数据流设计
+
+为确保扩展各部分（后台、侧边栏、选项页等）之间的高效、可靠和类型安全的通信，我们基于 `webext-bridge` 库，建立了一套统一的事件驱动通信架构。本章详细定义了其核心原则、消息格式和关键交互流程。
+
+### 5.1 核心原则
+
+1.  **后台中心化 (Background-Centric)**: 所有核心业务逻辑，包括数据读写 (`chrome.storage`)、API 调用、状态管理等，都集中在后台脚本 (`background`) 中处理。UI 层面（`pages/*`）是“哑”的，仅负责用户交互和数据展示。
+
+2.  **命令与事件分离 (CQRS Pattern)**:
+    *   **命令 (Commands)**: 从 UI 发往后台的单向请求，用于**触发**一个动作，如 `sendMessage`、`saveSettings`。命令通常是动词，表示“去做某事”。
+    *   **事件 (Events)**: 从后台广播到所有 UI 的通知，用于**宣告**一个状态变更，如 `onDataChanged`、`onSyncStatusChanged`。事件通常是过去时态，表示“某事已发生”。
+
+3.  **混合数据流策略**:
+    *   **标准流程 (Standard Flow)**: 适用于大多数数据变更。遵循 `UI Command -> Background Logic -> Storage Write -> Broadcast Event -> UI Refetch` 的模式，确保数据的最终一致性。
+    *   **乐观更新流程 (Optimistic Update Flow)**: 专用于 LLM 流式响应等低延迟场景。后台在收到数据流块 (`chunk`) 时，**立即**通过特定事件 (`onStreamChunk`) 将其直接推送到前端的内存状态 (Zustand Store)，实现UI的实时更新。流结束后，再通过标准流程写入最终结果，确保数据持久化。
+
+4.  **类型安全 (Type Safety)**: 所有跨上下文传递的消息都具有严格的 TypeScript 接口定义，存储在 `src/types/messaging.ts` (待创建) 中，以在编译时捕获潜在错误。
+
+### 5.2 消息定义
+
+#### 5.2.1 命令 (Commands): UI -> Background
+
+| 命令 | 描述 | 载荷 (Payload) | 返回值 (Return) |
+| :--- | :--- | :--- | :--- |
+| `getPageData` | 获取指定页面的完整数据 | `{ url: string }` | `Promise<PageData | null>` |
+| `sendMessage` | 发送一条新消息或重试/编辑现有消息 | `SendMessagePayload` | `Promise<void>` |
+| `stopMessage` | 停止正在生成的消息 | `StopMessagePayload` | `Promise<void>` |
+| `deletePageData` | 删除指定页面的所有数据 | `{ url: string }` | `Promise<void>` |
+| `saveSettings` | 保存完整的应用配置 | `{ settings: AppConfig }` | `Promise<void>` |
+| `getSettings` | 获取当前的应用配置 | `void` | `Promise<AppConfig>` |
+| `triggerExtraction` | 手动触发一次内容提取 | `{ url: string, provider: 'readability' | 'jina' }` | `Promise<void>` |
+| `performSync` | 手动触发一次云同步 | `void` | `Promise<void>` |
+| `updateBlacklist` | 更新黑名单列表 | `{ blacklist: string[] }` | `Promise<void>` |
+
+#### 5.2.2 事件 (Events): Background -> UI
+
+| 事件 | 描述 | 载荷 (Payload) |
+| :--- | :--- | :--- |
+| `onDataChanged` | 页面核心数据已更新，通知UI重新拉取 | `{ pageUrl: string }` |
+| `onStreamChunk` | LLM返回一个数据流块（用于打字机效果） | `StreamChunkPayload` |
+| `onSettingsChanged` | 应用配置已变更 | `{ newSettings: AppConfig }` |
+| `onSyncStatusChanged` | 云同步状态发生变化 | `{ status: 'syncing' | 'success' | 'error', message?: string }` |
+| `onExtractionStatusChanged` | 内容提取状态发生变化 | `{ pageUrl: string, status: 'loading' | 'completed' | 'error', error?: string }` |
+
+### 5.3 核心流程图 (Mermaid)
+
+#### 5.3.1 标准数据更新流程 (以删除页面数据为例)
+
+```mermaid
+sequenceDiagram
+    participant SidebarUI as 侧边栏UI
+    participant Bridge as webext-bridge
+    participant Background as 后台脚本
+    participant Storage as StorageService
+    participant ChromeStorage as chrome.storage
+
+    SidebarUI->>Bridge: 发送命令: deletePageData({ url })
+    Bridge->>Background: 路由命令
+    Background->>Storage: 调用 deletePageData(url)
+    Storage->>ChromeStorage: chrome.storage.local.remove(key)
+    ChromeStorage-->>Storage: 删除成功
+    Storage-->>Background: 操作完成
+    Background->>Bridge: 广播事件: onDataChanged({ pageUrl: url })
+    Bridge->>SidebarUI: 转发事件
+    SidebarUI->>SidebarUI: 监听器触发，从Zustand Store或直接重新拉取数据，UI更新
+```
+
+#### 5.3.2 LLM 流式响应流程
+
+```mermaid
+sequenceDiagram
+    participant SidebarUI as 侧边栏UI (React + Zustand)
+    participant Bridge as webext-bridge
+    participant Background as 后台脚本 (LlmService)
+    participant Storage as StorageService
+    participant LLM_API as 外部LLM API
+
+    %% 1. 发送消息并创建占位符
+    SidebarUI->>Bridge: 发送命令: sendMessage(payload)
+    Bridge->>Background: 路由命令
+    Background->>Storage: 更新数据 (创建占位符 ChatTurn/MessageBranch, status: 'loading')
+    Storage-->>Background: 更新完成
+    Background->>Bridge: 广播事件: onDataChanged({ pageUrl })
+    Bridge->>SidebarUI: 转发事件
+    SidebarUI->>SidebarUI: UI渲染加载状态
+
+    %% 2. 调用API并处理流式响应
+    Background->>LLM_API: 发起流式API请求
+    loop 数据流传输
+        LLM_API->>Background: 返回数据块 (chunk)
+        Background->>Bridge: 广播实时事件: onStreamChunk(chunk_payload)
+        Bridge->>SidebarUI: 转发事件
+        SidebarUI->>SidebarUI: Zustand Store直接更新内存状态，UI实时渲染打字机效果
+    end
+
+    %% 3. 结束流并最终持久化
+    LLM_API->>Background: 流结束
+    Background->>Storage: 更新数据 (写入完整content, status: 'completed')
+    Storage-->>Background: 更新完成
+    Background->>Bridge: 广播事件: onDataChanged({ pageUrl })
+    Bridge->>SidebarUI: 转发事件
+    SidebarUI->>SidebarUI: UI拉取最终数据，完成渲染
+```
