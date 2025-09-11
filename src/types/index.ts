@@ -17,6 +17,16 @@ export * from './providers'
 // UI相关
 export * from './ui'
 
+// 内容提取相关
+export * from './extraction'
+
+// 消息通信相关
+export * from './messages'
+
+// 解决类型名称冲突 - 显式导出以避免歧义
+export type { PageData as ChatPageData, UIState as ChatUIState, ExtractionStatus as ChatExtractionStatus } from './chat'
+export type { EnhancedPageData as ExtractionPageData, EnhancedUIState as ExtractionUIState, DetailedExtractionStatus as ExtractionStatus } from './extraction'
+
 // 通用类型
 export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]

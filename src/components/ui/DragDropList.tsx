@@ -112,7 +112,7 @@ function DragDropList<T extends DragDropItem>({
   items,
   onItemsChange,
   renderItem,
-  keyExtractor = (item) => item.id,
+  keyExtractor = (item) => item?.id || '',
   className,
   itemClassName,
   disabled = false,
@@ -127,22 +127,30 @@ function DragDropList<T extends DragDropItem>({
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
 
-    if (active.id !== over?.id) {
+    // Check if both active and over exist before accessing their properties
+    if (active?.id && over?.id && active.id !== over.id) {
       const oldIndex = items.findIndex((item) => keyExtractor(item) === active.id)
-      const newIndex = items.findIndex((item) => keyExtractor(item) === over?.id)
+      const newIndex = items.findIndex((item) => keyExtractor(item) === over.id)
 
-      onItemsChange(arrayMove(items, oldIndex, newIndex))
+      // Only proceed if both indices are valid
+      if (oldIndex >= 0 && newIndex >= 0) {
+        onItemsChange(arrayMove(items, oldIndex, newIndex))
+      }
     }
   }
 
   if (disabled) {
     return (
       <div className={cn('space-y-2', className)}>
-        {items.map((item, index) => (
-          <div key={keyExtractor(item)} className={itemClassName}>
-            {renderItem(item, index)}
-          </div>
-        ))}
+        {items.map((item, index) => {
+          const key = keyExtractor(item)
+          if (!key) return null
+          return (
+            <div key={key} className={itemClassName}>
+              {renderItem(item, index)}
+            </div>
+          )
+        })}
       </div>
     )
   }
@@ -154,12 +162,13 @@ function DragDropList<T extends DragDropItem>({
       onDragEnd={handleDragEnd}
     >
       <SortableContext
-        items={items.map(keyExtractor)}
+        items={items.map(keyExtractor).filter(Boolean)}
         strategy={verticalListSortingStrategy}
       >
         <div className={cn('space-y-2', className)}>
           {items.map((item, index) => {
             const key = keyExtractor(item)
+            if (!key) return null
             return (
               <SortableItem 
                 key={key} 

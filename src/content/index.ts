@@ -3,7 +3,7 @@
  * 作为后台与网页之间的桥梁
  */
 
-import { onMessage } from 'webext-bridge/content-script'
+import { onMessage, sendMessage } from 'webext-bridge/content-script'
 
 class ContentScript {
   private isReady = false
@@ -23,12 +23,14 @@ class ContentScript {
         this.setupMessageListeners()
       }
 
-      // 页面加载完成后标记为就绪
+      // 页面加载完成后标记为就绪并通知后台
       if (document.readyState === 'complete') {
         this.isReady = true
+        await this.notifyContentReady()
       } else {
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
           this.isReady = true
+          await this.notifyContentReady()
         })
       }
 
@@ -117,6 +119,25 @@ class ContentScript {
     // 默认 favicon 路径
     const defaultFavicon = `${window.location.origin}/favicon.ico`
     return defaultFavicon
+  }
+
+  /**
+   * 通知后台内容脚本已就绪
+   */
+  private async notifyContentReady(): Promise<void> {
+    try {
+      const response = await sendMessage('contentReady', {
+        url: window.location.href,
+        title: document.title,
+        readyState: String(document.readyState), // 确保 readyState 序列化为字符串
+        timestamp: Date.now(),
+        favicon: this.getFavicon()
+      }, 'background')
+      
+      console.log('[ThinkBot Content] Content ready notification sent', response)
+    } catch (error) {
+      console.error('[ThinkBot Content] Failed to notify content ready:', error)
+    }
   }
 }
 

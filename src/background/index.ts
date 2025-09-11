@@ -61,14 +61,23 @@ class BackgroundService {
     // 扩展图标点击事件
     chrome.action.onClicked.addListener(async (tab) => {
       try {
-        if (!tab.url || !tab.id) {
-          log.warn('Invalid tab for action click')
+        // Guard against undefined tab or missing fields
+        if (!tab) {
+          log.warn('No tab provided for action click')
+          return
+        }
+
+        const tabId = typeof tab.id === 'number' ? tab.id : undefined
+        const tabUrl = tab.url || ''
+
+        if (!tabId || !tabUrl) {
+          log.warn('Invalid tab for action click', { tabId, tabUrl })
           return
         }
 
         // 检查是否为受限页面
-        if (this.isRestrictedUrl(tab.url)) {
-          log.info('Restricted URL detected, opening conversations page', { url: tab.url })
+        if (this.isRestrictedUrl(tabUrl)) {
+          log.info('Restricted URL detected, opening conversations page', { url: tabUrl })
           await chrome.tabs.create({
             url: chrome.runtime.getURL('src/pages/conversations/index.html')
           })
@@ -76,9 +85,9 @@ class BackgroundService {
         }
 
         // 打开侧边栏
-        await chrome.sidePanel.open({ tabId: tab.id })
+        await chrome.sidePanel.open({ tabId })
         
-        log.debug('Side panel opened', { tabId: tab.id, url: tab.url })
+        log.debug('Side panel opened', { tabId, url: tabUrl })
       } catch (error) {
         log.error('Failed to handle action click', error)
       }

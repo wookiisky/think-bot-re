@@ -4,6 +4,7 @@
 
 @import 'tailwindcss';
 @import '../../public/font/material-icons.css';
+@import './themes.css';
 
 /* 基础样式 */
 @layer base {

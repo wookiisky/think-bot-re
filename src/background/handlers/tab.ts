@@ -58,7 +58,7 @@ export class TabHandler {
         url,
         tabId,
         isBlacklisted
-      }, 'sidebar')
+      }, `window@${tabId}`)
       
       log.debug('Tab change notified', { url, tabId, isBlacklisted })
     } catch (error) {

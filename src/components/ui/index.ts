@@ -12,6 +12,7 @@ export { FloatingLabelSelect, floatingSelectVariants } from './FloatingLabelSele
 export { FloatingLabelMultiSelect, floatingMultiSelectVariants } from './FloatingLabelMultiSelect'
 export { Input, inputVariants } from './Input'
 export { Modal } from './Modal'
+export { ResizeHandle } from './ResizeHandle'
 export { Select } from './Select'
 export { Switch } from './Switch'
 
@@ -23,5 +24,6 @@ export type { FloatingLabelSelectProps, SelectOption } from './FloatingLabelSele
 export type { FloatingLabelMultiSelectProps, MultiSelectOption } from './FloatingLabelMultiSelect'
 export type { InputProps } from './Input'
 export type { ModalProps } from './Modal'
+export type { ResizeHandleProps } from './ResizeHandle'
 export type { SelectProps } from './Select'
 export type { SwitchProps } from './Switch'
