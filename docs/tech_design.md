@@ -20,6 +20,7 @@
 -   表单处理: `react-hook-form` - 用于选项页面复杂的表单状态管理和校验。
 -   拖拽排序: `@dnd-kit/core` - 用于选项页中列表的拖拽排序功能。
 -   HTTP 请求: `ky` - 基于 Fetch API 的轻量级 HTTP 客户端，用于调用 Jina 及 LLM API。
+-   国际化: `lib/i18n` + `locales/<lang>.json` 组合提供纯 key-value 词典，支持按需懒加载与 UI 动态切换。
 
 ### 2.1 大模型 (LLM) SDKs
 - @google/generative-ai: Google Gemini 官方 SDK。
@@ -35,6 +36,11 @@
 
 2.  Provider 模式:
 对于存在多种实现的核心服务（内容提取、LLM调用、云同步），采用统一的 Provider 抽象接口和工厂模式进行管理。这使得添加新的服务提供商（如新的LLM）无需修改核心业务逻辑，只需实现接口并注册到工厂中。
+3.  Locale-First UI:
+UI 根据 `BasicConfig.language` 从 `locales` 目录加载纯 key-value 语言包，React 侧通过上下文实时切换，后台逻辑保持语言无关。
+
+4.  Chrome MV3 合规:
+所有后台代码运行在 Service Worker 中，避免长驻全局状态；遵循权限最小化并在 manifest 中显式声明注入脚本、`host_permissions` 与 `web_accessible_resources`，满足 Chrome Web Store 审核约束。
 
 ### 3.2 架构
 
@@ -71,7 +77,7 @@ UI 层通过 `@plasmo/messaging` 库向后台服务发送消息。这是一个�
 .
 ├── docs/
 │   ├── desc.md                # 需求文档（唯一需求源）
-│   └── final_design.md        # 当前方案
+│   └── tech_design.md        # 当前方案
 ├── package.json
 ├── plasmo.config.ts
 ├── tailwind.config.cjs
@@ -80,6 +86,9 @@ UI 层通过 `@plasmo/messaging` 库向后台服务发送消息。这是一个�
 ├── assets/
 │   ├── icon.png
 │   └── fonts/                 # Material Icons 字体切片
+├── locales/
+│   ├── en_US.json             # 英文语言包（纯 key-value，标记为 web_accessible）
+│   └── zh_CN.json             # 中文语言包（纯 key-value，标记为 web_accessible）
 ├── background/
 │   ├── index.ts               # MV3 Service Worker 入口
 │   ├── router.ts              # 消息路由注册
@@ -116,12 +125,16 @@ UI 层通过 `@plasmo/messaging` 库向后台服务发送消息。这是一个�
 │   │   ├── keys.ts            # 所有 chrome.storage 键名
 │   │   └── schema.ts          # Zod schema + 迁移逻辑
 │   ├── utils/                 # 工具函数（节流、hash 等）
+│   ├── i18n/                  # 轻量翻译上下文与语言包加载器
+│   │   ├── index.ts           # TranslationProvider + createTranslator
+│   │   └── loader.ts          # 语言包懒加载与缓存策略
 │   └── types/                 # 共享类型出口
 ├── store/
 │   ├── sidebar.ts             # Sidebar 运行时状态
 │   └── options.ts             # 选项页运行时状态
 ├── hooks/
 │   ├── useConfirm.ts          # 通用确认对话框
+│   ├── useTranslation.ts      # 读取翻译上下文，提供 `t` 与当前语言
 │   └── useLLMProvider.ts      # 根据配置选择默认模型
 ├── tests/
 │   ├── unit/                  # Vitest 单元测试
@@ -133,7 +146,7 @@ UI 层通过 `@plasmo/messaging` 库向后台服务发送消息。这是一个�
 
 ### 4.2 顶层配置与工程化
 - `package.json` 管理依赖、脚本与浏览器扩展构建配置，分离 `dev`/`build`/`test` 场景。
-- `plasmo.config.ts` 开启 Plasmo 的 Side Panel、Background、内容脚本入口，集中声明路径别名与扩展权限。
+- `plasmo.config.ts` 使用 `definePlasmoManifest` 开启 Side Panel、Background、内容脚本入口，集中声明路径别名、`web_accessible_resources` 与权限配置，保持与 Plasmo 官方约定一致。
 - `tailwind.config.cjs` 与 `postcss.config.cjs` 定义样式体系，侧边栏与选项页共享设计令牌；`tsconfig.json` 提供严格类型检查与路径映射。
 - `docs/` 保存需求与设计文档，是产品与实现对齐的参照物，在 PR 中作为变更说明引用。
 
@@ -155,13 +168,26 @@ UI 层通过 `@plasmo/messaging` 库向后台服务发送消息。这是一个�
 - `lib/messaging` 封装请求/响应范式，UI 侧只调用类型安全的 `client.ts`，后台通过 `handlers.ts` 注册中间件。
 - `lib/storage` 管理所有 `chrome.storage` 键名与 Zod Schema，提供迁移与默认值生成，避免各模块自行拼接字符串。
 - `lib/utils` 汇集跨层工具函数（节流、URL 归一化、Hash），保持 Service Worker 与 UI 共同逻辑的一致性。
+- `lib/i18n` 提供 `TranslationProvider` 与 `createTranslator`，基于 `locales/<lang>.json` 纯 key-value 词条并维护内存缓存。
 - `lib/types` 暴露跨模块共用的 TypeScript 类型，与 `lib/storage/schema.ts` 同步演进，防止循环依赖。
-- `store/`、`hooks/` 存放跨页面共享的 Zustand Store 与通用 Hook（如确认对话框、模型 Provider 选择），由 UI 模块按需引入。
+- `store/`、`hooks/` 存放跨页面共享的 Zustand Store 与通用 Hook（确认对话框、语言切换、模型 Provider 选择），由 UI 模块按需引入。
 
 ### 4.6 质量保障与辅助脚本
 - `tests/unit` 使用 Vitest 覆盖纯函数、Provider 工厂与存储迁移逻辑；`tests/integration` 用 Playwright 验证端到端流程。
 - `scripts/verify-env.ts` 在开发/打包前校验必需的 API Key 与权限配置，防止错误配置进入构建。
 - CI 中调用 `scripts/build-icons.ts`、`pnpm lint`、`pnpm test`，保证扩展包在提交前即可发布。
+
+### 4.7 国际化资源
+- `locales/` 目录维护所有语言包，文件名遵循 `<lang>.json` 并仅包含 `key: value` 映射，不引入 description 等冗余字段。通过 `plasmo.config.ts` 的 `definePlasmoManifest` 将 `locales/*.json` 注入 `web_accessible_resources`，并保持与 `_locales/` 元数据词条区分。
+- `lib/i18n/loader.ts` 使用 `chrome.runtime.getURL` 组合 `fetch`/动态 `import()` 拉取字典，满足 MV3 CSP 对本地资源的限制，同时在 Service Worker 侧缓存避免重复 IO。
+- `TranslationProvider` 在 UI 根节点注入当前语言，`useTranslation` 监听配置更新并触发重渲染，确保 Sidebar 与 Options 一致切换。
+
+### 4.8 Manifest 与权限策略
+- 采用 Plasmo `definePlasmoManifest` 生成 MV3 manifest，所有权限、`host_permissions` 与 `optional_permissions` 明确声明且遵循最小化原则，默认仅启用 `sidePanel`、`storage`、`scripting`、`tabs`。
+- 内容脚本与 `chrome.scripting.executeScript` 注入列表统一维护在 `plasmo.config.ts`，避免动态注入未授权脚本导致审核驳回。
+- 静态资源（如 `locales/*.json`、字体、图标）通过 `web_accessible_resources` 和 Plasmo `assets` 管道暴露，满足 Chrome 对非打包 URL 的访问限制。
+- 遵循 Chrome Web Store 政策：禁止在后台长连第三方域名收集数据；所有远程 API 调用通过用户配置的显式域名并在隐私政策中披露。
+- `content_security_policy` 保持 MV3 默认值，必要时通过 Plasmo 配置显式列出允许的 `connect-src` 域名，严禁使用 `unsafe-eval` 或内联脚本以符合审核规范。
 
 ## 5. 数据模型 (Schema)
 
@@ -199,7 +225,7 @@ export interface Timestamped {
 // 基础设置（与 UI 基础页对应）
 export interface BasicConfig extends Timestamped {
   theme: Theme;                    // 主题
-  language: Language;              // 界面语言
+  language: Language;              // 界面语言，对应 `locales/<lang>.json` 词典
   systemPrompt: string;            // 系统提示词
   defaultModelId: string;          // 默认模型ID
   contentDisplayHeight: number;    // 侧栏“内容展示区”默认高度(px)
@@ -430,6 +456,13 @@ export interface OptionsRuntimeState {
 5.  **异常处理**：若消息通道断开或 `chrome.runtime.lastError` 存在，后台立即清理状态并停止重试；若用户已自行关闭面板，内容脚本会发送 `sidebar/status: 'closed'`，后台据此跳过重复关闭。
 6.  **多窗口与会话恢复**：在窗口切换时借助 `windows.onFocusChanged` 更新 `activeSidebarWindowId`，防止跨窗口误关闭。当 Service Worker 冷启动时，从 `chrome.storage.session` 恢复上次记录的 `tabId`/`windowId`，仅对仍有效的标签发送清理请求。
 7.  **合规性提醒**：自动关闭属于用户手势后的后续整理，符合 Chrome Web Store 指南；仍需在选项页提供开关以尊重用户控制，同时在文档中声明功能依赖 `tabs`、`sidePanel`、`storage` 与 `scripting` 权限。
+### 6.5. 语言切换（配置驱动的即时更新）
+
+1.  **触发**：用户在选项页修改“界面语言”并点击保存。
+2.  **选项页 (Options UI)**：`react-hook-form` 更新本地状态并调用 `config/update` 消息，提交前借助 `useTranslation` 即时预览字段文案。
+3.  **后台 (StorageService)**：接收消息后更新 `thinkbot:config:v1`，写入新的 `language`，并通过 `@plasmohq/messaging` 广播配置变更。
+4.  **UI 平面**：Sidebar、Options、Tabs 通过 `useStorage` 获得最新配置，`TranslationProvider` 根据新的 `language` 调用 `lib/i18n/loader.ts` 懒加载词典并刷新上下文。
+5.  **缓存与回退**：`lib/i18n` 将字典缓存到内存，并通过后台 `StorageService` 代理写入 `chrome.storage.session`（UI 侧无法直接访问该 API），缺失词条时回退到 `en_US` 并在 DevTools 控制台告警，提醒补齐 `locales/<lang>.json`。
 
 ## 7. 错误处理与用户反馈
 
