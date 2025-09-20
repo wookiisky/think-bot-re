@@ -1,0 +1,73 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "strict": true,
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "~*": [
+        "./*"
+      ],
+      "~background/*": [
+        "background/*"
+      ],
+      "~contents/*": [
+        "contents/*"
+      ],
+      "~options/*": [
+        "options/*"
+      ],
+      "~tabs/*": [
+        "tabs/*"
+      ],
+      "~lib/*": [
+        "lib/*"
+      ],
+      "~hooks/*": [
+        "hooks/*"
+      ],
+      "~store/*": [
+        "store/*"
+      ],
+      "~tests/*": [
+        "tests/*"
+      ]
+    },
+    "types": [
+      "chrome",
+      "node"
+    ]
+  },
+  "include": [
+    ".plasmo/index.d.ts",
+    "background",
+    "components",
+    "contents",
+    "hooks",
+    "lib",
+    "locales",
+    "options",
+    "scripts",
+    "store",
+    "tabs",
+    "tests",
+    "plasmo.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
+}
