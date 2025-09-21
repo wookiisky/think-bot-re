@@ -1,6 +1,8 @@
 import type { ButtonHTMLAttributes } from "react"
 
 import { cn } from "../support/cn"
+import { darken, withAlpha } from "../support/color"
+import { useTheme } from "../support/ThemeProvider"
 
 interface SwitchProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
   checked: boolean
@@ -21,6 +23,7 @@ export const Switch = ({
   className,
   ...props
 }: SwitchProps) => {
+  const theme = useTheme()
   const trackClass = size === "sm" ? "w-10 h-5" : "w-12 h-6"
   const knobSize = size === "sm" ? 16 : 20
   const trackPadding = 2
@@ -40,8 +43,8 @@ export const Switch = ({
       <span
         className={cn("relative border", trackClass, disabled ? "opacity-60" : "")}
         style={{
-          borderColor: checked ? "#0b63ff" : "var(--ui-border)",
-          backgroundColor: checked ? "#0b63ff" : "rgba(12,17,29,0.08)",
+          borderColor: checked ? darken(theme.colors.primary, 0.16) : theme.colors.border,
+          backgroundColor: checked ? theme.colors.primary : withAlpha(theme.colors.text, 0.12),
           borderRadius: 0
         }}
       >
@@ -51,8 +54,8 @@ export const Switch = ({
             transform: `translateX(${offset}px)`,
             width: `${knobSize}px`,
             height: `${knobSize}px`,
-            borderColor: checked ? "#0b63ff" : "var(--ui-border)",
-            backgroundColor: "#ffffff"
+            borderColor: checked ? darken(theme.colors.primary, 0.16) : theme.colors.border,
+            backgroundColor: theme.colors.surface
           }}
         />
       </span>

@@ -40,7 +40,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           className="border px-3 py-2 text-sm outline-none"
           style={{
             backgroundColor: "var(--ui-surface)",
-            borderColor: error ? "#b42318" : "var(--ui-border)",
+            borderColor: error ? "var(--ui-danger)" : "var(--ui-border)",
             color: "var(--ui-text)",
             fontFamily: "var(--ui-font-base)"
           }}
@@ -56,7 +56,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ))}
         </select>
         {error ? (
-          <span className="text-xs" style={{ color: "#b42318" }}>{error}</span>
+          <span className="text-xs" style={{ color: "var(--ui-danger)" }}>{error}</span>
         ) : helperText ? (
           <span className="text-xs" style={{ color: "var(--ui-text-muted)" }}>{helperText}</span>
         ) : null}
@@ -100,7 +100,7 @@ export const MultiSelect = forwardRef<HTMLSelectElement, MultiSelectProps>(
           className="border px-3 py-2 text-sm outline-none"
           style={{
             backgroundColor: "var(--ui-surface)",
-            borderColor: error ? "#b42318" : "var(--ui-border)",
+            borderColor: error ? "var(--ui-danger)" : "var(--ui-border)",
             color: "var(--ui-text)",
             fontFamily: "var(--ui-font-base)",
             minHeight: "120px"
@@ -116,7 +116,7 @@ export const MultiSelect = forwardRef<HTMLSelectElement, MultiSelectProps>(
           ))}
         </select>
         {error ? (
-          <span className="text-xs" style={{ color: "#b42318" }}>{error}</span>
+          <span className="text-xs" style={{ color: "var(--ui-danger)" }}>{error}</span>
         ) : helperText ? (
           <span className="text-xs" style={{ color: "var(--ui-text-muted)" }}>{helperText}</span>
         ) : null}
@@ -183,7 +183,7 @@ export const FloatingLabelSelect = forwardRef<HTMLSelectElement, FloatingLabelSe
         <div
           className="relative border"
           style={{
-            borderColor: error ? "#b42318" : "var(--ui-border)",
+            borderColor: error ? "var(--ui-danger)" : "var(--ui-border)",
             backgroundColor: "var(--ui-surface)"
           }}
         >
@@ -214,9 +214,9 @@ export const FloatingLabelSelect = forwardRef<HTMLSelectElement, FloatingLabelSe
                 "pointer-events-none absolute left-3 select-none uppercase tracking-[0.12em] text-xs transition-all",
                 isFocused || hasSelection ? "top-2 text-[10px]" : "top-1/2 -translate-y-1/2 text-[11px]"
               )}
-              style={{
-                color: error ? "#b42318" : "var(--ui-text-muted)"
-              }}
+            style={{
+              color: error ? "var(--ui-danger)" : "var(--ui-text-muted)"
+            }}
             >
               {label}
             </label>
@@ -229,7 +229,7 @@ export const FloatingLabelSelect = forwardRef<HTMLSelectElement, FloatingLabelSe
           </span>
         </div>
         {error ? (
-          <span className="text-xs" style={{ color: "#b42318" }}>
+          <span className="text-xs" style={{ color: "var(--ui-danger)" }}>
             {error}
           </span>
         ) : helperText ? (
@@ -324,7 +324,7 @@ export const FloatingLabelMultiSelect = forwardRef<HTMLSelectElement, FloatingLa
         <div
           className="relative border"
           style={{
-            borderColor: error ? "#b42318" : "var(--ui-border)",
+            borderColor: error ? "var(--ui-danger)" : "var(--ui-border)",
             backgroundColor: "var(--ui-surface)"
           }}
         >
@@ -356,16 +356,16 @@ export const FloatingLabelMultiSelect = forwardRef<HTMLSelectElement, FloatingLa
                 "pointer-events-none absolute left-3 select-none uppercase tracking-[0.12em] text-xs transition-all",
                 isFocused || selectedCount > 0 ? "top-2 text-[10px]" : "top-1/2 -translate-y-1/2 text-[11px]"
               )}
-              style={{
-                color: error ? "#b42318" : "var(--ui-text-muted)"
-              }}
+            style={{
+              color: error ? "var(--ui-danger)" : "var(--ui-text-muted)"
+            }}
             >
               {label}
             </label>
           ) : null}
         </div>
         {error ? (
-          <span className="text-xs" style={{ color: "#b42318" }}>
+          <span className="text-xs" style={{ color: "var(--ui-danger)" }}>
             {error}
           </span>
         ) : helperText ? (

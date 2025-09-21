@@ -65,12 +65,13 @@ export const Tooltip = ({
       {children}
       {visible ? (
         <div
-          className={cn("absolute border px-3 py-1 text-xs uppercase tracking-[0.12em] shadow-lg", className)}
+          className={cn("absolute border px-3 py-1 text-xs uppercase tracking-[0.12em]", className)}
           style={{
             ...positionStyle(),
             backgroundColor: "var(--ui-surface)",
             borderColor: "var(--ui-border)",
-            color: "var(--ui-text)"
+            color: "var(--ui-text)",
+            boxShadow: "var(--ui-shadow-raised)"
           }}
           role="tooltip"
         >

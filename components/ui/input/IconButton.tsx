@@ -1,7 +1,8 @@
 import { forwardRef } from "react"
-import type { ButtonHTMLAttributes, ReactNode } from "react"
+import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react"
 
 import { cn } from "../support/cn"
+import { useTonePalettes } from "../support/palette"
 
 export type IconButtonTone = "primary" | "secondary" | "neutral" | "danger"
 export type IconButtonVariant = "solid" | "ghost" | "outline"
@@ -21,33 +22,6 @@ const sizeMap: Record<IconButtonSize, string> = {
   lg: "h-12 w-12 text-lg"
 }
 
-const tonePalette: Record<IconButtonTone, { bg: string; hover: string; color: string; border: string }> = {
-  primary: {
-    bg: "#0b63ff",
-    hover: "#094fcc",
-    color: "#ffffff",
-    border: "#094fcc"
-  },
-  secondary: {
-    bg: "#ff7a1a",
-    hover: "#e46308",
-    color: "#0c111d",
-    border: "#e46308"
-  },
-  neutral: {
-    bg: "rgba(12,17,29,0.08)",
-    hover: "rgba(12,17,29,0.12)",
-    color: "var(--ui-text)",
-    border: "var(--ui-border)"
-  },
-  danger: {
-    bg: "#b42318",
-    hover: "#8f1d13",
-    color: "#ffffff",
-    border: "#8f1d13"
-  }
-}
-
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   ({
     icon,
@@ -59,31 +33,26 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     disabled,
     ...props
   }, ref) => {
-    const palette = tonePalette[tone]
+    const palettes = useTonePalettes()
+    const tonePalette = palettes[tone]
+    const variantPalette =
+      variant === "solid"
+        ? tonePalette.solid
+        : variant === "outline"
+          ? tonePalette.outline
+          : tonePalette.ghost
 
-    const baseStyle = (() => {
-      if (variant === "solid") {
-        return {
-          backgroundColor: palette.bg,
-          color: palette.color,
-          borderColor: palette.border
-        }
-      }
+    const style: CSSProperties & { "--icon-button-hover"?: string } = {
+      backgroundColor: variantPalette.background,
+      color: variantPalette.color,
+      borderColor: variantPalette.border
+    }
 
-      if (variant === "outline") {
-        return {
-          backgroundColor: "transparent",
-          color: tone === "neutral" ? palette.color : palette.bg,
-          borderColor: tone === "neutral" ? palette.border : palette.bg
-        }
-      }
+    if (variantPalette.hoverBackground) {
+      style["--icon-button-hover"] = variantPalette.hoverBackground
+    }
 
-      return {
-        backgroundColor: "transparent",
-        color: tone === "neutral" ? palette.color : palette.bg,
-        borderColor: "transparent"
-      }
-    })()
+    const hoverClass = !disabled && variantPalette.hoverBackground ? "hover:bg-[var(--icon-button-hover)]" : ""
 
     return (
       <button
@@ -93,10 +62,10 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         className={cn(
           "inline-flex items-center justify-center border uppercase tracking-[0.12em] transition-all",
           sizeMap[size],
-          disabled ? "cursor-not-allowed opacity-60" : "hover:translate-y-[-1px]",
+          disabled ? "cursor-not-allowed opacity-60" : cn("hover:translate-y-[-1px]", hoverClass),
           className
         )}
-        style={baseStyle}
+        style={style}
         disabled={disabled}
         {...props}
       >

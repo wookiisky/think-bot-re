@@ -15,9 +15,18 @@ const parseMarkdown = (content: string): string => {
     .replace(/^### (.*$)/gm, '<h3 class="mb-2 mt-3 text-base font-semibold uppercase tracking-[0.06em]" style="color: var(--ui-text)">$1</h3>')
     .replace(/^> (.*$)/gm, '<blockquote class="mb-4 border-l-2 pl-3 text-sm" style="border-color: var(--ui-border-strong); color: var(--ui-text-muted)">$1</blockquote>')
     .replace(/^\- (.*$)/gm, '<li class="mb-1" style="color: var(--ui-text)">$1</li>')
-    .replace(/`([^`]+)`/g, '<code class="rounded-none border px-1 text-xs" style="background-color: rgba(12,17,29,0.04); border-color: var(--ui-border); font-family: var(--ui-font-mono); color: var(--ui-text)">$1</code>')
-    .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre class="mb-3 overflow-auto border p-3 text-xs" style="background-color: rgba(12,17,29,0.06); border-color: var(--ui-border); font-family: var(--ui-font-mono); color: var(--ui-text)"><code>$2</code></pre>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="underline decoration-[rgba(11,99,255,0.4)] decoration-2 underline-offset-2" style="color: #0b63ff" target="_blank" rel="noreferrer">$1</a>')
+    .replace(
+      /`([^`]+)`/g,
+      '<code class="rounded-none border px-1 text-xs" style="background-color: color-mix(in srgb, var(--ui-text) 8%, transparent); border-color: var(--ui-border); font-family: var(--ui-font-mono); color: var(--ui-text)">$1</code>'
+    )
+    .replace(
+      /```(\w+)?\n([\s\S]*?)```/g,
+      '<pre class="mb-3 overflow-auto border p-3 text-xs" style="background-color: color-mix(in srgb, var(--ui-text) 6%, transparent); border-color: var(--ui-border); font-family: var(--ui-font-mono); color: var(--ui-text)"><code>$2</code></pre>'
+    )
+    .replace(
+      /\[([^\]]+)\]\(([^)]+)\)/g,
+      '<a href="$2" class="underline" style="color: var(--ui-primary); text-decoration-color: color-mix(in srgb, var(--ui-primary) 45%, transparent); text-decoration-thickness: 2px; text-underline-offset: 4px" target="_blank" rel="noreferrer">$1</a>'
+    )
     .replace(/\n\n/g, '</p><p class="mb-2 leading-relaxed text-sm last:mb-0" style="color: var(--ui-text)">')
     .replace(/\n/g, '<br>')
 }
@@ -54,7 +63,7 @@ const components_unused = {
         <code
           className="rounded-none border px-1 text-xs"
           style={{
-            backgroundColor: "rgba(12,17,29,0.04)",
+            backgroundColor: "color-mix(in srgb, var(--ui-text) 8%, transparent)",
             borderColor: "var(--ui-border)",
             fontFamily: "var(--ui-font-mono)",
             color: "var(--ui-text)"
@@ -69,7 +78,7 @@ const components_unused = {
       <pre
         className="mb-3 overflow-auto border p-3 text-xs"
         style={{
-          backgroundColor: "rgba(12,17,29,0.06)",
+          backgroundColor: "color-mix(in srgb, var(--ui-text) 6%, transparent)",
           borderColor: "var(--ui-border)",
           fontFamily: "var(--ui-font-mono)",
           color: "var(--ui-text)"
@@ -82,8 +91,13 @@ const components_unused = {
   a: ({ children, href }) => (
     <a
       href={href}
-      className="underline decoration-[rgba(11,99,255,0.4)] decoration-2 underline-offset-2"
-      style={{ color: "#0b63ff" }}
+      className="underline"
+      style={{
+        color: "var(--ui-primary)",
+        textDecorationColor: "color-mix(in srgb, var(--ui-primary) 45%, transparent)",
+        textDecorationThickness: "2px",
+        textUnderlineOffset: "4px"
+      }}
       target="_blank"
       rel="noreferrer"
     >

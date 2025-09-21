@@ -25,6 +25,7 @@ import {
   Badge,
   MediaPreview,
   Icon,
+  IconButton,
   TextField,
   FloatingLabelTextField,
   Textarea,
@@ -449,8 +450,16 @@ const DemoContent = () => {
               description="Page-level actions"
               trailing={
                 <InlineStack gap="sm">
-                  <Button variant="ghost" tone="neutral" size="sm" onClick={() => log.info("toolbar/refresh")}>Refresh</Button>
-                  <Button variant="ghost" tone="neutral" size="sm" onClick={() => log.info("toolbar/settings")}>Settings</Button>
+                  <IconButton
+                    label="Refresh content"
+                    icon={<Icon name="refresh" ariaHidden />}
+                    onClick={() => log.info("toolbar/refresh")}
+                  />
+                  <IconButton
+                    label="Open settings"
+                    icon={<Icon name="settings" ariaHidden />}
+                    onClick={() => log.info("toolbar/settings")}
+                  />
                 </InlineStack>
               }
             />
@@ -608,6 +617,14 @@ const DemoContent = () => {
               <Button variant="outline" tone="secondary" onClick={() => log.info("button/secondary")}>Secondary</Button>
               <Button tone="danger" onClick={() => log.info("button/danger")}>Danger</Button>
               <Button variant="ghost" tone="neutral" size="sm" onClick={() => log.info("icon-button/copy")}>Copy</Button>
+              <IconButton
+                variant="ghost"
+                tone="neutral"
+                size="sm"
+                label="Copy"
+                icon={<Icon name="content_copy" ariaHidden />}
+                onClick={() => log.info("icon-button/copy")}
+              />
             </InlineStack>
           </Stack>
         </Section>

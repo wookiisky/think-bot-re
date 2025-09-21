@@ -1,6 +1,9 @@
+import { useMemo } from "react"
 import type { ReactNode } from "react"
 
 import { cn } from "../support/cn"
+import { withAlpha } from "../support/color"
+import { useTheme } from "../support/ThemeProvider"
 
 type BadgeTone = "default" | "primary" | "info" | "success" | "warning" | "danger"
 
@@ -12,39 +15,6 @@ interface BadgeProps {
   size?: BadgeSize
   icon?: ReactNode
   className?: string
-}
-
-const toneColorMap: Record<BadgeTone, { background: string; text: string; border: string }> = {
-  default: {
-    background: "rgba(12,17,29,0.06)",
-    text: "var(--ui-text)",
-    border: "var(--ui-border)"
-  },
-  primary: {
-    background: "rgba(11,99,255,0.12)",
-    text: "#0b63ff",
-    border: "rgba(11,99,255,0.4)"
-  },
-  info: {
-    background: "rgba(36,98,181,0.12)",
-    text: "var(--ui-info)",
-    border: "rgba(36,98,181,0.4)"
-  },
-  success: {
-    background: "rgba(26,127,55,0.12)",
-    text: "var(--ui-success)",
-    border: "rgba(26,127,55,0.4)"
-  },
-  warning: {
-    background: "rgba(178,94,13,0.12)",
-    text: "var(--ui-warning)",
-    border: "rgba(178,94,13,0.4)"
-  },
-  danger: {
-    background: "rgba(180,35,24,0.12)",
-    text: "var(--ui-danger)",
-    border: "rgba(180,35,24,0.4)"
-  }
 }
 
 const sizeClassMap: Record<BadgeSize, string> = {
@@ -59,7 +29,44 @@ export const Badge = ({
   icon,
   className
 }: BadgeProps) => {
-  const palette = toneColorMap[tone]
+  const theme = useTheme()
+
+  const paletteMap = useMemo(() => {
+    return {
+      default: {
+        background: withAlpha(theme.colors.text, 0.06),
+        text: theme.colors.text,
+        border: theme.colors.border
+      },
+      primary: {
+        background: withAlpha(theme.colors.primary, 0.16),
+        text: theme.colors.primary,
+        border: withAlpha(theme.colors.primary, 0.4)
+      },
+      info: {
+        background: withAlpha(theme.colors.info, 0.16),
+        text: theme.colors.info,
+        border: withAlpha(theme.colors.info, 0.4)
+      },
+      success: {
+        background: withAlpha(theme.colors.success, 0.16),
+        text: theme.colors.success,
+        border: withAlpha(theme.colors.success, 0.4)
+      },
+      warning: {
+        background: withAlpha(theme.colors.warning, 0.16),
+        text: theme.colors.warning,
+        border: withAlpha(theme.colors.warning, 0.4)
+      },
+      danger: {
+        background: withAlpha(theme.colors.danger, 0.16),
+        text: theme.colors.danger,
+        border: withAlpha(theme.colors.danger, 0.4)
+      }
+    } satisfies Record<BadgeTone, { background: string; text: string; border: string }>
+  }, [theme])
+
+  const palette = paletteMap[tone]
 
   return (
     <span

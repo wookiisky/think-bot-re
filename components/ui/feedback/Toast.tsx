@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import type { ReactNode } from "react"
 
 import { cn } from "../support/cn"
+import { withAlpha } from "../support/color"
 
 export type ToastTone = "info" | "success" | "warning" | "danger"
 
@@ -30,36 +31,50 @@ interface ToastProviderProps {
   children: ReactNode
 }
 
-const tonePalette: Record<ToastTone, { border: string; background: string; title: string; description: string }> = {
-  info: {
-    border: "rgba(36,98,181,0.4)",
-    background: "rgba(36,98,181,0.12)",
-    title: "var(--ui-info)",
-    description: "var(--ui-text)"
-  },
-  success: {
-    border: "rgba(26,127,55,0.4)",
-    background: "rgba(26,127,55,0.12)",
-    title: "var(--ui-success)",
-    description: "var(--ui-text)"
-  },
-  warning: {
-    border: "rgba(178,94,13,0.4)",
-    background: "rgba(178,94,13,0.12)",
-    title: "var(--ui-warning)",
-    description: "var(--ui-text)"
-  },
-  danger: {
-    border: "rgba(180,35,24,0.4)",
-    background: "rgba(180,35,24,0.12)",
-    title: "var(--ui-danger)",
-    description: "var(--ui-text)"
+const cssVariable = (name: string, fallback: string) => {
+  if (typeof document === "undefined") {
+    return fallback
+  }
+
+  const computed = getComputedStyle(document.documentElement).getPropertyValue(name)
+  return computed.trim() || fallback
+}
+
+const readThemeSnapshot = () => {
+  return {
+    surface: cssVariable("--ui-surface", "#ffffff"),
+    text: cssVariable("--ui-text", "#0c111d"),
+    textMuted: cssVariable("--ui-text-muted", "#4f5a6b"),
+    border: cssVariable("--ui-border", "#d0d7e5"),
+    info: cssVariable("--ui-info", "#2462b5"),
+    success: cssVariable("--ui-success", "#1a7f37"),
+    warning: cssVariable("--ui-warning", "#b25e0d"),
+    danger: cssVariable("--ui-danger", "#b42318")
   }
 }
 
 export const ToastProvider = ({ children }: ToastProviderProps) => {
   const [toasts, setToasts] = useState<ToastItem[]>([])
   const timers = useRef<Map<string, number>>(new Map())
+  const [colors, setColors] = useState(() => readThemeSnapshot())
+
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return
+    }
+
+    setColors(readThemeSnapshot())
+
+    const observer = new MutationObserver(() => {
+      setColors(readThemeSnapshot())
+    })
+
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["style"] })
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
 
   const dismissToast = useCallback((id: string) => {
     setToasts((current) => current.filter((toast) => toast.id !== id))
@@ -103,6 +118,35 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
 
   const value = useMemo(() => ({ showToast, dismissToast }), [showToast, dismissToast])
 
+  const tonePalette = useMemo(() => {
+    return {
+      info: {
+        border: withAlpha(colors.info, 0.4),
+        background: withAlpha(colors.info, 0.16),
+        title: colors.info,
+        description: colors.text
+      },
+      success: {
+        border: withAlpha(colors.success, 0.4),
+        background: withAlpha(colors.success, 0.16),
+        title: colors.success,
+        description: colors.text
+      },
+      warning: {
+        border: withAlpha(colors.warning, 0.4),
+        background: withAlpha(colors.warning, 0.16),
+        title: colors.warning,
+        description: colors.text
+      },
+      danger: {
+        border: withAlpha(colors.danger, 0.4),
+        background: withAlpha(colors.danger, 0.16),
+        title: colors.danger,
+        description: colors.text
+      }
+    } satisfies Record<ToastTone, { border: string; background: string; title: string; description: string }>
+  }, [colors])
+
   return (
     <ToastContext.Provider value={value}>
       {children}
@@ -112,10 +156,11 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
           return (
             <div
               key={toast.id}
-              className={cn("border px-4 py-3 shadow-lg")}
+              className={cn("border px-4 py-3")}
               style={{
                 borderColor: palette.border,
-                backgroundColor: palette.background
+                backgroundColor: palette.background,
+                boxShadow: "var(--ui-shadow-raised)"
               }}
             >
               <div className="flex items-start justify-between gap-3">
@@ -134,7 +179,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
                 <button
                   type="button"
                   className="text-xs uppercase tracking-[0.12em]"
-                  style={{ color: "var(--ui-text-muted)" }}
+                  style={{ color: colors.textMuted }}
                   onClick={() => dismissToast(toast.id)}
                 >
                   Close

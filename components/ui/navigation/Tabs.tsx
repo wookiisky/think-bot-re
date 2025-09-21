@@ -1,6 +1,8 @@
 import type { ReactNode } from "react"
 
 import { cn } from "../support/cn"
+import { withAlpha } from "../support/color"
+import { useTheme } from "../support/ThemeProvider"
 
 type TabState = "idle" | "loading" | "hasData"
 
@@ -33,18 +35,6 @@ const sizeClassMap: Record<TabSize, string> = {
   md: "px-4 py-3 text-sm"
 }
 
-const indicatorColor = (state: TabState | undefined, isActive: boolean) => {
-  if (state === "loading") {
-    return "linear-gradient(90deg, #0b63ff 0%, #ff7a1a 100%)"
-  }
-
-  if (state === "hasData" && !isActive) {
-    return "#0b63ff"
-  }
-
-  return isActive ? "#0b63ff" : "transparent"
-}
-
 export const Tabs = ({
   items,
   activeId,
@@ -55,6 +45,9 @@ export const Tabs = ({
   className
 }: TabsProps) => {
   const isVertical = orientation === "vertical"
+  const theme = useTheme()
+  const hoverTint = withAlpha(theme.colors.primary, 0.12)
+  const activeTint = withAlpha(theme.colors.primary, 0.18)
 
   return (
     <nav
@@ -63,14 +56,24 @@ export const Tabs = ({
         className
       )}
       role="tablist"
-      style={{ borderColor: "var(--ui-border)", backgroundColor: "var(--ui-surface)" }}
+      style={{ borderColor: theme.colors.border, backgroundColor: theme.colors.surface }}
       aria-orientation={orientation}
     >
       <div className={cn(isVertical ? "flex flex-col" : "flex items-stretch")}
       >
         {items.map((item) => {
           const isActive = item.id === activeId
-          const indicator = indicatorColor(item.state, isActive)
+          const indicator = (() => {
+            if (item.state === "loading") {
+              return `linear-gradient(90deg, ${theme.colors.primary} 0%, ${theme.colors.secondary} 100%)`
+            }
+
+            if (item.state === "hasData" && !isActive) {
+              return theme.colors.primary
+            }
+
+            return isActive ? theme.colors.primary : "transparent"
+          })()
 
           return (
             <button
@@ -85,17 +88,18 @@ export const Tabs = ({
                 "relative flex items-center gap-2 border-b text-left uppercase tracking-[0.08em] transition-colors",
                 stretch ? "flex-1" : "",
                 sizeClassMap[size],
-                item.disabled ? "opacity-60" : "hover:bg-[rgba(11,99,255,0.08)]"
+                item.disabled ? "opacity-60" : cn("hover:bg-[var(--tab-hover)]")
               )}
-              style={{
-                borderColor: "var(--ui-border)",
-                color: isActive ? "var(--ui-text)" : "var(--ui-text-muted)",
-                backgroundColor: isActive ? "rgba(11,99,255,0.06)" : "var(--ui-surface)"
-              }}
+                style={{
+                  borderColor: theme.colors.border,
+                  color: isActive ? theme.colors.text : theme.colors.textMuted,
+                  backgroundColor: isActive ? activeTint : theme.colors.surface,
+                  "--tab-hover": isActive ? activeTint : hoverTint
+                }}
             >
               {item.icon ? <span className="text-base">{item.icon}</span> : null}
               <span className="truncate">{item.label}</span>
-              {item.badge ? <span className="text-xs" style={{ color: "var(--ui-text-muted)" }}>{item.badge}</span> : null}
+              {item.badge ? <span className="text-xs" style={{ color: theme.colors.textMuted }}>{item.badge}</span> : null}
               <span
                 aria-hidden="true"
                 className={cn(
