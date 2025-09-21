@@ -468,3 +468,21 @@ export interface OptionsRuntimeState {
 
 -   提取/LLM 失败: 在分支消息内直接展示错误信息。
 -   操作确认: 所有删除操作前，使用一个在点击处弹出的mini `ConfirmDialog` 组件进行二次确认。
+
+## 9. UI 组件库落地说明
+
+1. **目录结构**：
+   - components/ui/layout|navigation|display|input|feedback|support 对应需求文档的分类，所有组件都由 components/ui/index.ts 汇总导出，供 Sidebar、Options、Tabs 等平面复用。
+   - components/ui/support/ThemeProvider.tsx 提供主题令牌合并与 CSS 变量写入机制，AppShell 默认注入主题，保持直角、蓝橙配色与紧凑布局的一致性。
+2. **关键组件**：
+   - 布局层包含 AppShell、Surface/Panel、SplitPane、ScrollableArea、Stack、ResponsiveGrid，满足侧边栏/会话/选项页的基础骨架复用。
+   - 导航层提供 Toolbar、Tabs（含横竖向、加载状态彩条）、ListNavigator（集成搜索、状态徽章、空态）。
+   - 展示层包含 Typography 体系、RichTextViewer（基于 eact-markdown）、Card、Badge、MediaPreview、Icon。
+   - 输入层实现 TextField、Textarea/AutoResizeTextarea、Select/MultiSelect、ButtonSelect、ButtonSwitch、Switch、SearchInput，并提供浮动标签版本，复用基础组件的计数器、错误提示和多选事件，方便在密集配置表单中保持可读性。
+   - 反馈层提供 Spinner/ProgressIndicator、StatusBadge、InlineAlert、ToastProvider+useToast、Modal、MiniConfirmModal、Tooltip。
+3. **演示页面**：
+   - 	abs/ui-demo.tsx 通过 ToastProvider 包裹 AppShell，一次性渲染上述全部组件，展示主题切换、分屏拖拽、滚动吸顶、表单联动、反馈通知等组合场景。
+   - Demo 页面侧边栏使用 ListNavigator 跳转锚点，顶部动作按钮调用 Toast、主题切换等逻辑，可直接在 chrome://extensions 载入调试 UI。
+4. **日志与可观测性**：
+   - 组件层统一使用 createUiLogger 打印关键交互日志（如 SplitPane 调整、主题切换、Confirm 操作），方便在 DevTools 中追踪 Demo 行为。
+

@@ -137,7 +137,7 @@ Think Bot 是一个强大的浏览器辅助工具，其核心理念是让用户�
         -   一个可拖拽排序的列表，每一项代表一个可用的 LLM。
         -   每项包含模型名称、提供商 (OpenAI/Gemini/Azure)、API Key、Endpoint、模型 ID 等配置。
         -   提供添加和删除操作。
-3. 使用FloatingLabel的输入框，多选框等
+3. 使用 FloatingLabel 的输入框、多选框等，浮动标签在输入框聚焦或已有值时收起到顶部，并继承基础组件的错误提示、字数统计与多选联动能力。
 
 ### 4.2. 交互流程与功能
 
@@ -290,3 +290,11 @@ Think Bot 是一个强大的浏览器辅助工具，其核心理念是让用户�
 -   本地Material Icons:
     -   用途: 为整个扩展提供统一的图标系统。所有界面上的图标（如发送、删除、设置、复制等）都来自于这个图标库。
     -   位置: 在所有具有 UI 的页面（Sidebar, Options, Conversations）中通过 CSS 引入和使用。
+
+## 9. UI 组件体系与演示页面
+
+- 在 components/ui 下实现统一的基础组件库，按照“布局 / 导航 / 展示 / 输入 / 反馈 / 辅助”分类，复用相同的主题令牌与直角无圆角风格。
+- 组件库覆盖 AppShell、SplitPane、ScrollableArea、Tabs、ListNavigator、RichTextViewer、Badge、Button 系列、Select/MultiSelect、Switch、Toast、Modal、Tooltip 等需求文档中重复出现的交互模式。
+- 	abs/ui-demo.tsx 新增“UI Demo” 页面，用于一次性预览全部基础组件，并提供主题切换、窗口分屏、滚动区域、表单控件、反馈状态等交互示例，便于设计和测试对齐视觉语言。
+- Demo 页面结合 ToastProvider、Modal、MiniConfirmModal 等组件展示跨层反馈闭环，可作为 QA 与产品验收的参考入口。
+

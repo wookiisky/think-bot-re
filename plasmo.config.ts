@@ -1,10 +1,12 @@
+import path from "path"
+import { createRequire } from "module"
 import { defineConfig, definePlasmoManifest } from "plasmo"
 
+const require = createRequire(import.meta.url)
+const vfileBase = path.dirname(require.resolve("vfile/package.json"))
+
 export default defineConfig({
-  runtimeManifest: definePlasmoManifest(() => ({
-    name: "Think Bot RE",
-    version: "0.1.0",
-    manifest_version: 3,
+  manifest: {
     default_locale: "en",
     action: {
       default_title: "Think Bot RE"
@@ -32,5 +34,14 @@ export default defineConfig({
         matches: ["<all_urls>"]
       }
     ]
-  }))
+  },
+  vite: {
+    resolve: {
+      alias: {
+        "#minpath": path.join(vfileBase, "lib/minpath.browser.js"),
+        "#minproc": path.join(vfileBase, "lib/minproc.browser.js"),
+        "#minurl": path.join(vfileBase, "lib/minurl.browser.js")
+      }
+    }
+  }
 })

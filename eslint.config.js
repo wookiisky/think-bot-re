@@ -5,6 +5,7 @@ import prettier from "eslint-config-prettier"
 export default tseslint.config(
   {
     ignores: [
+      ".plasmo",
       "build",
       "dist",
       "coverage",
