@@ -1,4 +1,8 @@
+import { useMemo } from "react"
+
 import { cn } from "../support/cn"
+import { withAlpha } from "../support/color"
+import { useTheme } from "../support/ThemeProvider"
 
 export type StatusTone = "neutral" | "info" | "success" | "warning" | "danger"
 
@@ -9,36 +13,40 @@ interface StatusBadgeProps {
   className?: string
 }
 
-const tonePalette: Record<StatusTone, { background: string; color: string; border: string }> = {
-  neutral: {
-    background: "rgba(12,17,29,0.08)",
-    color: "var(--ui-text)",
-    border: "var(--ui-border)"
-  },
-  info: {
-    background: "rgba(36,98,181,0.12)",
-    color: "var(--ui-info)",
-    border: "rgba(36,98,181,0.4)"
-  },
-  success: {
-    background: "rgba(26,127,55,0.12)",
-    color: "var(--ui-success)",
-    border: "rgba(26,127,55,0.4)"
-  },
-  warning: {
-    background: "rgba(178,94,13,0.12)",
-    color: "var(--ui-warning)",
-    border: "rgba(178,94,13,0.4)"
-  },
-  danger: {
-    background: "rgba(180,35,24,0.12)",
-    color: "var(--ui-danger)",
-    border: "rgba(180,35,24,0.4)"
-  }
-}
-
 export const StatusBadge = ({ tone = "neutral", label, pulse = false, className }: StatusBadgeProps) => {
-  const palette = tonePalette[tone]
+  const theme = useTheme()
+
+  const paletteMap = useMemo(() => {
+    return {
+      neutral: {
+        background: withAlpha(theme.colors.text, 0.08),
+        color: theme.colors.text,
+        border: theme.colors.border
+      },
+      info: {
+        background: withAlpha(theme.colors.info, 0.16),
+        color: theme.colors.info,
+        border: withAlpha(theme.colors.info, 0.4)
+      },
+      success: {
+        background: withAlpha(theme.colors.success, 0.16),
+        color: theme.colors.success,
+        border: withAlpha(theme.colors.success, 0.4)
+      },
+      warning: {
+        background: withAlpha(theme.colors.warning, 0.16),
+        color: theme.colors.warning,
+        border: withAlpha(theme.colors.warning, 0.4)
+      },
+      danger: {
+        background: withAlpha(theme.colors.danger, 0.16),
+        color: theme.colors.danger,
+        border: withAlpha(theme.colors.danger, 0.4)
+      }
+    } satisfies Record<StatusTone, { background: string; color: string; border: string }>
+  }, [theme])
+
+  const palette = paletteMap[tone]
 
   return (
     <span

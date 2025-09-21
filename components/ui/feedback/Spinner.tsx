@@ -14,10 +14,10 @@ interface SpinnerProps {
 }
 
 const toneColor: Record<SpinnerTone, string> = {
-  primary: "#0b63ff",
-  secondary: "#ff7a1a",
+  primary: "var(--ui-primary)",
+  secondary: "var(--ui-secondary)",
   neutral: "var(--ui-border-strong)",
-  danger: "#b42318"
+  danger: "var(--ui-danger)"
 }
 
 const sizeToStyle = (size: SpinnerSize): CSSProperties => {
@@ -80,9 +80,9 @@ interface ProgressIndicatorProps {
 }
 
 const progressTone: Record<NonNullable<ProgressIndicatorProps["tone"]>, string> = {
-  primary: "#0b63ff",
-  secondary: "#ff7a1a",
-  danger: "#b42318"
+  primary: "var(--ui-primary)",
+  secondary: "var(--ui-secondary)",
+  danger: "var(--ui-danger)"
 }
 
 export const ProgressIndicator = ({
@@ -100,7 +100,13 @@ export const ProgressIndicator = ({
           {!indeterminate ? <span>{Math.round(value)}%</span> : null}
         </div>
       ) : null}
-      <div className="h-2 border" style={{ borderColor: "var(--ui-border)", backgroundColor: "rgba(12,17,29,0.06)" }}>
+      <div
+        className="h-2 border"
+        style={{
+          borderColor: "var(--ui-border)",
+          backgroundColor: "color-mix(in srgb, var(--ui-text) 8%, transparent)"
+        }}
+      >
         <div
           className={cn("h-full", indeterminate ? "animate-pulse" : "")}
           style={{

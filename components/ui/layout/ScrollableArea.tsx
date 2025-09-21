@@ -97,10 +97,22 @@ export const ScrollableArea = ({
         ) : null}
       </div>
       {!isTop ? (
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-[rgba(12,17,29,0.12)] to-transparent" />
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-6"
+          style={{
+            backgroundImage:
+              "linear-gradient(to bottom, color-mix(in srgb, var(--ui-text) 14%, transparent), transparent)"
+          }}
+        />
       ) : null}
       {!isBottom ? (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[rgba(12,17,29,0.12)] to-transparent" />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-6"
+          style={{
+            backgroundImage:
+              "linear-gradient(to top, color-mix(in srgb, var(--ui-text) 14%, transparent), transparent)"
+          }}
+        />
       ) : null}
       <div className="pointer-events-none absolute right-2 top-2 flex flex-col gap-2">
         {!isTop ? (

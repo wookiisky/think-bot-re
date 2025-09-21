@@ -1,6 +1,9 @@
+import { useMemo } from "react"
 import type { ReactNode } from "react"
 
 import { cn } from "../support/cn"
+import { withAlpha } from "../support/color"
+import { useTheme } from "../support/ThemeProvider"
 
 export type InlineAlertTone = "info" | "success" | "warning" | "danger"
 
@@ -12,35 +15,39 @@ interface InlineAlertProps {
   className?: string
 }
 
-const tonePalette: Record<InlineAlertTone, { background: string; border: string; title: string; description: string }> = {
-  info: {
-    background: "rgba(36,98,181,0.12)",
-    border: "rgba(36,98,181,0.4)",
-    title: "var(--ui-info)",
-    description: "var(--ui-text)"
-  },
-  success: {
-    background: "rgba(26,127,55,0.12)",
-    border: "rgba(26,127,55,0.4)",
-    title: "var(--ui-success)",
-    description: "var(--ui-text)"
-  },
-  warning: {
-    background: "rgba(178,94,13,0.12)",
-    border: "rgba(178,94,13,0.4)",
-    title: "var(--ui-warning)",
-    description: "var(--ui-text)"
-  },
-  danger: {
-    background: "rgba(180,35,24,0.12)",
-    border: "rgba(180,35,24,0.4)",
-    title: "var(--ui-danger)",
-    description: "var(--ui-text)"
-  }
-}
-
 export const InlineAlert = ({ title, description, tone = "info", action, className }: InlineAlertProps) => {
-  const palette = tonePalette[tone]
+  const theme = useTheme()
+
+  const paletteMap = useMemo(() => {
+    return {
+      info: {
+        background: withAlpha(theme.colors.info, 0.16),
+        border: withAlpha(theme.colors.info, 0.4),
+        title: theme.colors.info,
+        description: theme.colors.text
+      },
+      success: {
+        background: withAlpha(theme.colors.success, 0.16),
+        border: withAlpha(theme.colors.success, 0.4),
+        title: theme.colors.success,
+        description: theme.colors.text
+      },
+      warning: {
+        background: withAlpha(theme.colors.warning, 0.16),
+        border: withAlpha(theme.colors.warning, 0.4),
+        title: theme.colors.warning,
+        description: theme.colors.text
+      },
+      danger: {
+        background: withAlpha(theme.colors.danger, 0.16),
+        border: withAlpha(theme.colors.danger, 0.4),
+        title: theme.colors.danger,
+        description: theme.colors.text
+      }
+    } satisfies Record<InlineAlertTone, { background: string; border: string; title: string; description: string }>
+  }, [theme])
+
+  const palette = paletteMap[tone]
 
   return (
     <div

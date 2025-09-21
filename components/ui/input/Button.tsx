@@ -1,8 +1,9 @@
 import { forwardRef } from "react"
-import type { ButtonHTMLAttributes, ReactNode } from "react"
+import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from "react"
 
 import { Spinner } from "../feedback/Spinner"
 import { cn } from "../support/cn"
+import { useTonePalettes } from "../support/palette"
 
 export type ButtonVariant = "solid" | "outline" | "ghost"
 export type ButtonTone = "primary" | "secondary" | "neutral" | "danger"
@@ -16,33 +17,6 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   iconPosition?: "left" | "right"
   loading?: boolean
   fullWidth?: boolean
-}
-
-const toneStyles: Record<ButtonTone, { background: string; hover: string; color: string; border: string }> = {
-  primary: {
-    background: "#0b63ff",
-    hover: "#094fcc",
-    color: "#ffffff",
-    border: "#094fcc"
-  },
-  secondary: {
-    background: "#ff7a1a",
-    hover: "#e46308",
-    color: "#0c111d",
-    border: "#e46308"
-  },
-  neutral: {
-    background: "rgba(12,17,29,0.08)",
-    hover: "rgba(12,17,29,0.12)",
-    color: "var(--ui-text)",
-    border: "var(--ui-border)"
-  },
-  danger: {
-    background: "#b42318",
-    hover: "#8f1d13",
-    color: "#ffffff",
-    border: "#8f1d13"
-  }
 }
 
 const sizeClassMap: Record<ButtonSize, string> = {
@@ -81,31 +55,27 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     className,
     ...props
   }, ref) => {
-    const palette = toneStyles[tone]
+    const palettes = useTonePalettes()
+    const tonePalette = palettes[tone]
+    const variantPalette =
+      variant === "solid"
+        ? tonePalette.solid
+        : variant === "outline"
+          ? tonePalette.outline
+          : tonePalette.ghost
 
-    const baseStyle = (() => {
-      if (variant === "solid") {
-        return {
-          backgroundColor: palette.background,
-          color: palette.color,
-          borderColor: palette.border
-        }
-      }
+    const style: CSSProperties & { "--btn-hover"?: string } = {
+      backgroundColor: variantPalette.background,
+      color: variantPalette.color,
+      borderColor: variantPalette.border
+    }
 
-      if (variant === "outline") {
-        return {
-          backgroundColor: "transparent",
-          color: tone === "neutral" ? palette.color : palette.background,
-          borderColor: tone === "neutral" ? palette.border : palette.background
-        }
-      }
+    if (variantPalette.hoverBackground) {
+      style["--btn-hover"] = variantPalette.hoverBackground
+    }
 
-      return {
-        backgroundColor: "transparent",
-        color: tone === "neutral" ? palette.color : palette.background,
-        borderColor: "transparent"
-      }
-    })()
+    const hoverClass =
+      !disabled && !loading && variantPalette.hoverBackground ? "hover:bg-[var(--btn-hover)]" : ""
 
     return (
       <button
@@ -114,10 +84,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           "inline-flex items-center justify-center gap-2 border uppercase tracking-[0.12em] transition-all",
           sizeClassMap[size],
           fullWidth ? "w-full" : "",
-          disabled || loading ? "cursor-not-allowed opacity-60" : "hover:translate-y-[-1px]",
+          disabled || loading ? "cursor-not-allowed opacity-60" : cn("hover:translate-y-[-1px]", hoverClass),
           className
         )}
-        style={baseStyle}
+        style={style}
         disabled={disabled || loading}
         {...props}
       >

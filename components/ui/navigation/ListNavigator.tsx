@@ -6,6 +6,8 @@ import { Icon } from "../display/Icon"
 import { SearchInput } from "../input/SearchInput"
 import { StatusBadge } from "../feedback/StatusBadge"
 import { cn } from "../support/cn"
+import { withAlpha } from "../support/color"
+import { useTheme } from "../support/ThemeProvider"
 
 export interface ListNavigatorItem {
   id: string
@@ -40,6 +42,7 @@ export const ListNavigator = ({
   className
 }: ListNavigatorProps) => {
   const [query, setQuery] = useState("")
+  const theme = useTheme()
 
   const filtered = useMemo(() => {
     if (!query) {
@@ -53,10 +56,16 @@ export const ListNavigator = ({
     )
   }, [items, query])
 
+  const highlight = withAlpha(theme.colors.primary, 0.16)
+  const hoverTint = withAlpha(theme.colors.primary, 0.1)
+
   return (
-    <div className={cn("flex h-full flex-col border", className)} style={{ borderColor: "var(--ui-border)" }}>
+    <div
+      className={cn("flex h-full flex-col border", className)}
+      style={{ borderColor: theme.colors.border, backgroundColor: theme.colors.surface }}
+    >
       {searchable ? (
-        <div className="border-b p-3" style={{ borderColor: "var(--ui-border)" }}>
+        <div className="border-b p-3" style={{ borderColor: theme.colors.border }}>
           <SearchInput
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -68,13 +77,19 @@ export const ListNavigator = ({
       ) : null}
       <div className="flex-1 overflow-y-auto">
         {filtered.length === 0 ? (
-          <div className="flex h-full items-center justify-center text-sm" style={{ color: "var(--ui-text-muted)" }}>
+          <div className="flex h-full items-center justify-center text-sm" style={{ color: theme.colors.textMuted }}>
             {emptyState ?? "No items"}
           </div>
         ) : (
           <ul>
             {filtered.map((item) => {
               const isActive = item.id === activeId
+              const itemStyle = {
+                borderColor: theme.colors.border,
+                color: isActive ? theme.colors.primary : theme.colors.text,
+                backgroundColor: isActive ? highlight : "transparent",
+                "--navigator-hover": isActive ? highlight : hoverTint
+              }
               return (
                 <li key={item.id}>
                   <button
@@ -82,25 +97,28 @@ export const ListNavigator = ({
                     onClick={() => onSelect(item.id)}
                     className={cn(
                       "flex w-full items-start justify-between gap-3 border-b px-4 py-3 text-left",
-                      isActive ? "bg-[rgba(11,99,255,0.12)]" : "hover:bg-[rgba(12,17,29,0.06)]"
+                      "hover:bg-[var(--navigator-hover)]"
                     )}
-                    style={{ borderColor: "var(--ui-border)" }}
+                    style={itemStyle}
                   >
                     <div className="flex items-start gap-3">
                       {item.icon ? (
                         <Icon name={item.icon} size="md" ariaHidden />
                       ) : null}
                       <div>
-                        <div className="text-sm font-semibold uppercase tracking-[0.08em]" style={{ color: isActive ? "#0b63ff" : "var(--ui-text)" }}>
+                        <div
+                          className="text-sm font-semibold uppercase tracking-[0.08em]"
+                          style={{ color: isActive ? theme.colors.primary : theme.colors.text }}
+                        >
                           {item.title}
                         </div>
                         {item.description ? (
-                          <div className="text-xs" style={{ color: "var(--ui-text-muted)" }}>
+                          <div className="text-xs" style={{ color: theme.colors.textMuted }}>
                             {item.description}
                           </div>
                         ) : null}
                         {item.meta ? (
-                          <div className="mt-1 text-xs" style={{ color: "var(--ui-text-muted)" }}>
+                          <div className="mt-1 text-xs" style={{ color: theme.colors.textMuted }}>
                             {item.meta}
                           </div>
                         ) : null}
@@ -122,7 +140,7 @@ export const ListNavigator = ({
         )}
       </div>
       {footer ? (
-        <div className="border-t p-3" style={{ borderColor: "var(--ui-border)" }}>
+        <div className="border-t p-3" style={{ borderColor: theme.colors.border }}>
           {footer}
         </div>
       ) : null}

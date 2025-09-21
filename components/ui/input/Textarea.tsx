@@ -59,7 +59,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           className="min-h-[96px] resize-y border px-3 py-3 text-sm outline-none"
           style={{
             backgroundColor: "var(--ui-surface)",
-            borderColor: error ? "#b42318" : "var(--ui-border)",
+            borderColor: error ? "var(--ui-danger)" : "var(--ui-border)",
             color: "var(--ui-text)",
             fontFamily: "var(--ui-font-base)"
           }}
@@ -71,7 +71,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         />
         <div className="flex items-center justify-between text-xs">
           {error ? (
-            <span style={{ color: "#b42318" }}>{error}</span>
+          <span style={{ color: "var(--ui-danger)" }}>{error}</span>
           ) : helperText ? (
             <span style={{ color: "var(--ui-text-muted)" }}>{helperText}</span>
           ) : (
@@ -190,7 +190,7 @@ export const FloatingLabelTextarea = forwardRef<HTMLTextAreaElement, FloatingLab
         <div
           className="relative border"
           style={{
-            borderColor: error ? "#b42318" : "var(--ui-border)",
+            borderColor: error ? "var(--ui-danger)" : "var(--ui-border)",
             backgroundColor: "var(--ui-surface)"
           }}
         >
@@ -223,7 +223,7 @@ export const FloatingLabelTextarea = forwardRef<HTMLTextAreaElement, FloatingLab
                 isFocused || hasValue ? "top-2 text-[10px]" : "top-1/2 -translate-y-1/2 text-[11px]"
               )}
               style={{
-                color: error ? "#b42318" : "var(--ui-text-muted)"
+                color: error ? "var(--ui-danger)" : "var(--ui-text-muted)"
               }}
             >
               {label}
@@ -232,7 +232,7 @@ export const FloatingLabelTextarea = forwardRef<HTMLTextAreaElement, FloatingLab
         </div>
         <div className="flex items-center justify-between text-xs">
           {error ? (
-            <span style={{ color: "#b42318" }}>{error}</span>
+            <span style={{ color: "var(--ui-danger)" }}>{error}</span>
           ) : helperText ? (
             <span style={{ color: "var(--ui-text-muted)" }}>{helperText}</span>
           ) : (

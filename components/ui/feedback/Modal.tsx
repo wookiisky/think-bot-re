@@ -3,6 +3,8 @@ import { useEffect } from "react"
 import type { CSSProperties, ReactNode } from "react"
 
 import { cn } from "../support/cn"
+import { darken, withAlpha } from "../support/color"
+import { useTheme } from "../support/ThemeProvider"
 
 interface ModalProps {
   open: boolean
@@ -30,6 +32,8 @@ const overlayRoot = () => {
 }
 
 export const Modal = ({ open, onClose, title, description, footer, children, width = 480 }: ModalProps) => {
+  const theme = useTheme()
+
   useEffect(() => {
     if (!open) {
       return
@@ -55,32 +59,33 @@ export const Modal = ({ open, onClose, title, description, footer, children, wid
   return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backgroundColor: "rgba(12,17,29,0.52)" }}
+      style={{ backgroundColor: withAlpha(theme.colors.text, 0.58) }}
       onClick={onClose}
     >
       <div
-        className={cn("border px-6 py-4 shadow-xl")}
+        className={cn("border px-6 py-4")}
         style={{
           width: `${width}px`,
           maxWidth: "90vw",
-          backgroundColor: "var(--ui-surface)",
-          borderColor: "var(--ui-border)"
+          backgroundColor: theme.colors.surface,
+          borderColor: theme.colors.border,
+          boxShadow: "var(--ui-shadow-overlay)"
         }}
         onClick={(event) => event.stopPropagation()}
       >
         {title ? (
-          <div className="mb-2 text-lg font-semibold uppercase tracking-[0.08em]" style={{ color: "var(--ui-text)" }}>
+          <div className="mb-2 text-lg font-semibold uppercase tracking-[0.08em]" style={{ color: theme.colors.text }}>
             {title}
           </div>
         ) : null}
         {description ? (
-          <div className="mb-4 text-sm" style={{ color: "var(--ui-text-muted)" }}>
+          <div className="mb-4 text-sm" style={{ color: theme.colors.textMuted }}>
             {description}
           </div>
         ) : null}
         {children}
         {footer ? (
-          <div className="mt-6 flex items-center justify-end gap-2 border-t pt-3" style={{ borderColor: "var(--ui-border)" }}>
+          <div className="mt-6 flex items-center justify-end gap-2 border-t pt-3" style={{ borderColor: theme.colors.border }}>
             {footer}
           </div>
         ) : null}
@@ -109,6 +114,8 @@ export const MiniConfirmModal = ({
   confirmLabel = "Confirm",
   cancelLabel = "Cancel"
 }: MiniConfirmModalProps) => {
+  const theme = useTheme()
+
   const target = overlayRoot()
   if (!open || !target) {
     return null
@@ -130,17 +137,25 @@ export const MiniConfirmModal = ({
   return createPortal(
     <div style={style} className="z-50" onClick={(event) => event.stopPropagation()}>
       <div
-        className="border px-4 py-3 shadow-lg"
-        style={{ backgroundColor: "var(--ui-surface)", borderColor: "var(--ui-border)" }}
+        className="border px-4 py-3"
+        style={{
+          backgroundColor: theme.colors.surface,
+          borderColor: theme.colors.border,
+          boxShadow: "var(--ui-shadow-raised)"
+        }}
       >
-        <div className="mb-3 text-sm" style={{ color: "var(--ui-text)" }}>
+        <div className="mb-3 text-sm" style={{ color: theme.colors.text }}>
           {message}
         </div>
         <div className="flex items-center justify-end gap-2">
           <button
             type="button"
             className="border px-3 py-1 text-xs uppercase tracking-[0.12em]"
-            style={{ borderColor: "var(--ui-border)", color: "var(--ui-text-muted)", backgroundColor: "var(--ui-surface)" }}
+            style={{
+              borderColor: theme.colors.border,
+              color: theme.colors.textMuted,
+              backgroundColor: theme.colors.surface
+            }}
             onClick={onCancel}
           >
             {cancelLabel}
@@ -148,7 +163,11 @@ export const MiniConfirmModal = ({
           <button
             type="button"
             className="border px-3 py-1 text-xs uppercase tracking-[0.12em]"
-            style={{ borderColor: "#0b63ff", backgroundColor: "#0b63ff", color: "#ffffff" }}
+            style={{
+              borderColor: darken(theme.colors.primary, 0.16),
+              backgroundColor: theme.colors.primary,
+              color: theme.colors.primaryText
+            }}
             onClick={onConfirm}
           >
             {confirmLabel}

@@ -49,7 +49,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           className="flex items-center gap-2 border px-3"
           style={{
             backgroundColor: "var(--ui-surface)",
-            borderColor: error ? "#b42318" : "var(--ui-border)"
+            borderColor: error ? "var(--ui-danger)" : "var(--ui-border)"
           }}
         >
           {prefix ? <span className="text-xs" style={{ color: "var(--ui-text-muted)" }}>{prefix}</span> : null}
@@ -69,7 +69,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           {suffix ? <span className="text-xs" style={{ color: "var(--ui-text-muted)" }}>{suffix}</span> : null}
         </div>
         {error ? (
-          <span className="text-xs" style={{ color: "#b42318" }}>
+          <span className="text-xs" style={{ color: "var(--ui-danger)" }}>
             {error}
           </span>
         ) : helperText ? (
@@ -105,7 +105,7 @@ export const FloatingLabelTextField = forwardRef<HTMLInputElement, FloatingLabel
         <div
           className="relative border"
           style={{
-            borderColor: error ? "#b42318" : "var(--ui-border)",
+            borderColor: error ? "var(--ui-danger)" : "var(--ui-border)",
             backgroundColor: "var(--ui-surface)"
           }}
         >
@@ -131,14 +131,14 @@ export const FloatingLabelTextField = forwardRef<HTMLInputElement, FloatingLabel
               "peer-focus:top-2 peer-focus:-translate-y-0 peer-focus:text-[10px]"
             )}
             style={{
-              color: error ? "#b42318" : "var(--ui-text-muted)"
+              color: error ? "var(--ui-danger)" : "var(--ui-text-muted)"
             }}
           >
             {floatingLabel}
           </label>
         </div>
         {error ? (
-          <span className="text-xs" style={{ color: "#b42318" }}>
+          <span className="text-xs" style={{ color: "var(--ui-danger)" }}>
             {error}
           </span>
         ) : helperText ? (
