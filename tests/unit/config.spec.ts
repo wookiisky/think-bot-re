@@ -4,6 +4,6 @@ import { getDefaultConfig } from "../../lib/storage/schema"
 
 describe("getDefaultConfig", () => {
   it("returns default language", () => {
-    expect(getDefaultConfig().language).toBe("en")
+    expect(getDefaultConfig().general.language).toBe("en")
   })
 })

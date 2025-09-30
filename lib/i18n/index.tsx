@@ -1,4 +1,13 @@
-import { createContext, useContext, useMemo, type ReactNode } from "react"
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode
+} from "react"
+
+import { loadDictionary } from "./loader"
 
 interface TranslationValue {
   language: string
@@ -16,14 +25,32 @@ interface TranslationProviderProps {
 }
 
 export const TranslationProvider = ({ language, children }: TranslationProviderProps) => {
-  const value = useMemo(() => {
-    console.info("[i18n] activate language", language)
+  const [dictionary, setDictionary] = useState<Record<string, string>>({})
 
-    return {
-      language,
-      t: (key: string) => key
+  useEffect(() => {
+    let mounted = true
+
+    const load = async () => {
+      const messages = await loadDictionary(language)
+
+      if (mounted) {
+        setDictionary(messages)
+      }
+    }
+
+    void load()
+
+    return () => {
+      mounted = false
     }
   }, [language])
+
+  const value = useMemo(() => {
+    return {
+      language,
+      t: (key: string) => dictionary[key] ?? key
+    }
+  }, [language, dictionary])
 
   return <TranslationContext.Provider value={value}>{children}</TranslationContext.Provider>
 }
