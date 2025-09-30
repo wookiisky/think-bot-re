@@ -1,19 +1,26 @@
-export interface MessagingRequest<TPayload = unknown> {
-  type: string
-  payload?: TPayload
-}
+import type {
+  MessagingEnvelope,
+  MessagingRequestType,
+  MessagingResponse
+} from "./contracts"
 
-export interface MessagingResponse<TResult = unknown> {
-  success: boolean
-  result?: TResult
-  error?: string
-}
-
-export const sendBackgroundMessage = async <TPayload, TResult>(
-  request: MessagingRequest<TPayload>
-): Promise<MessagingResponse<TResult>> => {
-  console.info("[messaging] send placeholder message", request)
-  return {
-    success: true
+export const sendBackgroundMessage = async <TType extends MessagingRequestType>(
+  request: MessagingEnvelope<TType>
+): Promise<MessagingResponse<TType>> => {
+  if (typeof chrome === "undefined" || !chrome.runtime?.sendMessage) {
+    throw new Error("chrome messaging is unavailable in this environment")
   }
+
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(request, (response) => {
+      const lastError = chrome.runtime.lastError
+
+      if (lastError) {
+        reject(new Error(lastError.message))
+        return
+      }
+
+      resolve(response as MessagingResponse<TType>)
+    })
+  })
 }
